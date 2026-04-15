@@ -1,0 +1,32 @@
+<body class="bg-light">
+<div class="container py-5">
+    <h2 class="mb-4">🏥 Triagem Hospitalar Fuzzy</h2>
+    <div class="card p-4 shadow-sm">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label>Temperatura (°C)</label>
+                    <input type="number" step="0.1" name="temp" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Saturação O2 (%)</label>
+                    <input type="number" name="spo2" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Nível de Dor (0-10)</label>
+                    <input type="number" name="dor" class="form-control" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-dark w-100">Classificar Risco</button>
+        </form>
+    </div>
+
+    {% if score %}
+    <div class="alert alert-{{ cor }} mt-4 text-center">
+        <h3>Classificação: {{ status }}</h3>
+        <p>Índice de Prioridade: {{ score }}%</p>
+    </div>
+    {% endif %}
+</div>
+</body>
