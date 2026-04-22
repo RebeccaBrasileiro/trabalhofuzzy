@@ -12,7 +12,7 @@ def home(request):
     contexto = {}
     if request.method == "POST":
         try:
-            # Captura dados
+
             t = float(request.POST.get("temp", 0))
             o = float(request.POST.get("spo2", 0))
             d = float(request.POST.get("dor", 0))
@@ -20,20 +20,18 @@ def home(request):
 
             print(f">>> Dados recebidos: Temp={t}, O2={o}, Dor={d}, FC={fc}")
 
-            # Chama a lógica
             score, simulador, temperatura, oxigenio, dor, frequencia, prioridade = (
                 calcular_triagem(t, o, d, fc)
             )
             print(f">>> Score calculado: {score}")
 
-            # Mapeamento
             if score >= 85:
                 status, cor, classe = (
                     "EMERGÊNCIA (Vermelho)",
                     "danger",
                     "text-white bg-danger",
                 )
-            elif score >= 70:
+            elif score >= 75:
                 status, cor, classe = (
                     "MUITO URGENTE (Laranja)",
                     "warning",
@@ -58,11 +56,9 @@ def home(request):
                     "text-white bg-primary",
                 )
 
-            # Gráfico
             uri_grafico = None
             graficos_pertinencia = []
 
-            # Gera gráficos das funções de pertinência (sempre, independente do simulador)
             variaveis = [
                 ("Temperatura", temperatura),
                 ("Saturação O2", oxigenio),
@@ -86,13 +82,12 @@ def home(request):
 
             if simulador:
                 try:
-                    # Gera a imagem do gráfico de saída
+
                     consequent = list(simulador.ctrl.consequents)[0]
                     consequent.view(sim=simulador)
                     fig = plt.gcf()
                     ax = fig.gca()
 
-                    # Ajusta as cores dos rótulos do gráfico de prioridade
                     cores = {
                         "azul": "blue",
                         "verde": "green",
@@ -107,11 +102,9 @@ def home(request):
                             line.set_color(cores[label])
                             line.set_linewidth(2)
 
-                    # Atualiza a legenda para ficar consistente com as cores
                     handles, labels = ax.get_legend_handles_labels()
                     ax.legend(handles, labels, frameon=True)
 
-                    # Adiciona linha preta na prioridade defuzzificada
                     if ax is not None:
                         ax.axvline(score, color="black", linestyle="--", linewidth=2)
                         ax.text(
@@ -135,7 +128,6 @@ def home(request):
                 except Exception as e_grafico:
                     print(f"Erro ao gerar gráfico: {e_grafico}")
 
-            # DICIONÁRIO DE CONTEXTO (Garanta que esses nomes batem com o HTML)
             contexto = {
                 "score": round(score, 2),
                 "status": status,
@@ -143,7 +135,7 @@ def home(request):
                 "classe_css": classe,
                 "grafico": uri_grafico,
                 "graficos_pertinencia": graficos_pertinencia,
-                "resultado_pronto": True,  # Chave de segurança para o HTML
+                "resultado_pronto": True,
             }
 
         except Exception as e:
