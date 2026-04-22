@@ -31,7 +31,8 @@ def calcular_triagem(temp_val, spo2_val, dor_val, fc_val):
     prioridade["azul"] = fuzz.trimf(prioridade.universe, [0, 0, 30])
     prioridade["verde"] = fuzz.trimf(prioridade.universe, [25, 45, 65])
     prioridade["amarelo"] = fuzz.trimf(prioridade.universe, [60, 75, 85])
-    prioridade["vermelho"] = fuzz.trapmf(prioridade.universe, [80, 90, 100, 100])
+    prioridade["laranja"] = fuzz.trimf(prioridade.universe, [75, 85, 95])
+    prioridade["vermelho"] = fuzz.trapmf(prioridade.universe, [85, 95, 100, 100])
 
     # --- BASE DE REGRAS AMPLIADA (Hierarquia de Risco) ---
     regras = [
@@ -47,6 +48,20 @@ def calcular_triagem(temp_val, spo2_val, dor_val, fc_val):
             frequencia["bradicardia"] & oxigenio["critico"], prioridade["vermelho"]
         ),
         ctrl.Rule(dor["severa"] & oxigenio["critico"], prioridade["vermelho"]),
+        # --- NÍVEL LARANJA (MUITO URGENTE) ---
+        # Condições muito urgentes, mas não emergenciais
+        ctrl.Rule(
+            temperatura["alta"] & oxigenio["normal"] & frequencia["taquicardia"],
+            prioridade["laranja"],
+        ),
+        ctrl.Rule(
+            dor["severa"] & temperatura["febre"] & oxigenio["normal"],
+            prioridade["laranja"],
+        ),
+        ctrl.Rule(
+            frequencia["taquicardia"] & oxigenio["normal"] & dor["moderada"],
+            prioridade["laranja"],
+        ),
         # --- NÍVEL AMARELO (URGENTE) ---
         # Sinais vitais instáveis, mas sem risco de morte imediato
         ctrl.Rule(temperatura["alta"] & oxigenio["normal"], prioridade["amarelo"]),

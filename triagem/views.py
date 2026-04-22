@@ -27,19 +27,25 @@ def home(request):
             print(f">>> Score calculado: {score}")
 
             # Mapeamento
-            if score >= 80:
+            if score >= 85:
                 status, cor, classe = (
                     "EMERGÊNCIA (Vermelho)",
                     "danger",
                     "text-white bg-danger",
                 )
-            elif score >= 60:
+            elif score >= 70:
+                status, cor, classe = (
+                    "MUITO URGENTE (Laranja)",
+                    "warning",
+                    "text-white bg-laranja",
+                )
+            elif score >= 50:
                 status, cor, classe = (
                     "URGENTE (Amarelo)",
                     "warning",
                     "text-dark bg-warning",
                 )
-            elif score >= 30:
+            elif score >= 25:
                 status, cor, classe = (
                     "POUCO URGENTE (Verde)",
                     "success",
@@ -91,6 +97,7 @@ def home(request):
                         "azul": "blue",
                         "verde": "green",
                         "amarelo": "yellow",
+                        "laranja": "orange",
                         "vermelho": "red",
                         "crisp value": "black",
                     }
